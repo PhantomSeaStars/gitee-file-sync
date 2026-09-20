@@ -1,0 +1,39 @@
+name: Sync Gist Raw File to Gitee
+
+on:
+  schedule:
+    # 每 6 小时检查并同步一次（UTC 时间 0:00, 6:00, 12:00, 18:00）
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # 支持手动点击按钮立即运行
+
+jobs:
+  download-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch and Commit to Gitee
+        env:
+          GITEE_USER: "sub-store"
+          GITEE_REPO: "sub-store"
+          GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
+          FILE_URL: "https://gist.githubusercontent.com/PhantomSeaStars/e1345dd4afafd9f675fb67fcca50c2d8/raw/sing1-15"
+          TARGET_FILE_NAME: "sing1-15"
+        run: |
+          git config --global user.name "AutoSyncBot"
+          git config --global user.email "bot@sync.local"
+
+          # 1. 克隆 Gitee 目标仓库
+          git clone "https://${GITEE_USER}:${GITEE_TOKEN}@gitee.com/${GITEE_USER}/${GITEE_REPO}.git" repo
+          cd repo
+
+          # 2. 下载目标 Raw 文件的最新内容并覆盖
+          curl -sL "$FILE_URL" -o "$TARGET_FILE_NAME"
+
+          # 3. 判断文件是否有变动（有变动才提交，避免产生空 Commit）
+          if [[ -n $(git status -s) ]]; then
+            git add "$TARGET_FILE_NAME"
+            git commit -m "chore: auto-sync $TARGET_FILE_NAME ($(date '+%Y-%m-%d %H:%M:%S'))"
+            git push origin main
+            echo "Successfully updated and pushed to Gitee."
+          else
+            echo "File is up to date, no changes detected."
+          fi
