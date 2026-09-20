@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Fetch and Commit to Gitee
         env:
-          GITEE_USER: "sub-store"
+          GITEE_USER: "PhantomSeaStars"
           GITEE_REPO: "sub-store"
           GITEE_TOKEN: ${{ secrets.GITEE_TOKEN }}
           FILE_URL: "https://gist.githubusercontent.com/PhantomSeaStars/e1345dd4afafd9f675fb67fcca50c2d8/raw/sing1-15"
