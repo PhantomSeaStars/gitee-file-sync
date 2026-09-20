@@ -32,7 +32,7 @@ jobs:
           if [[ -n $(git status -s) ]]; then
             git add "$TARGET_FILE_NAME"
             git commit -m "chore: auto-sync $TARGET_FILE_NAME ($(date '+%Y-%m-%d %H:%M:%S'))"
-            git push origin main
+            git push origin master
             echo "Successfully updated and pushed to Gitee."
           else
             echo "File is up to date, no changes detected."
